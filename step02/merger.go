@@ -4,33 +4,33 @@ package main
 type MergeCandidate uint64
 
 // NewMergeCandidate creates a new instance of MergeCandidate for the given document id and overlap count
-func NewMergeCandidate(id DocumentID, overlap uint32) MergeCandidate {
-	return MergeCandidate(pack(id, overlap))
+func NewMergeCandidate(id DocumentID, overlap int) MergeCandidate {
+	return MergeCandidate(uint64(id)<<32 | uint64(overlap))
 }
 
 // Position returns the position of the merge candidate
 func (m MergeCandidate) Position() DocumentID {
-	docID, _ := unpack(uint64(m))
-
-	return docID
+	return DocumentID(m >> 32)
 }
 
 // Overlap returns the overlap count of the merge candidate
 func (m MergeCandidate) Overlap() int {
-	_, overlap := unpack(uint64(m))
-
 	// This will be safe, because we will never reach overlap (we don't have so many posting list at once)
-	return int(overlap)
+	return int(uint32(m))
 }
 
 // increment increments the underlying overlap count
 func (m *MergeCandidate) increment() {
-	*m = NewMergeCandidate(m.Position(), uint32(m.Overlap()+1))
+	*m = NewMergeCandidate(m.Position(), m.Overlap()+1)
 }
 
 // Merge merges the given list of postings and returns array of merge candidates
 // The returned list holds merge candidates with preserving the order
 func Merge(rid []PostingList) []MergeCandidate {
+	// use an approach of merging 2 sorted list described here https://www.geeksforgeeks.org/merge-two-sorted-arrays/
+	// here tmp will store the result of the merge between (rid[k] and result)
+	// after merge operation, we swap tmp and result and do the same operation with rid[k+1]
+
 	result := []MergeCandidate{}
 	tmp := []MergeCandidate{}
 
@@ -58,14 +58,4 @@ func Merge(rid []PostingList) []MergeCandidate {
 	}
 
 	return result
-}
-
-// pack packes the given 2 uint32 numbers into uint64
-func pack(a, b uint32) uint64 {
-	return uint64(a)<<32 | uint64(b)
-}
-
-// unpack explodes the given uint64 into 2 uint32
-func unpack(m uint64) (uint32, uint32) {
-	return uint32(m >> 32), uint32(m)
 }

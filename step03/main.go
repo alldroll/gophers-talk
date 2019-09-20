@@ -3,31 +3,34 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 )
 
-func main() {
-	dictionary := []string{
-		"gopher",
-		"go",
-		"london",
-		"brother",
-		"php",
-		"philosophy",
-		"independent",
-	}
+const nGram = 2
 
-	suggester := BuildIndex(2, dictionary)
+var dictionary = []string{
+	"gopher",
+	"go",
+	"london",
+	"brother",
+	"php",
+	"philosophy",
+	"independent",
+}
+
+func main() {
+	suggester := BuildIndex(nGram, dictionary)
 
 	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Print(">> ")
+	fmt.Print(">>> ")
 
 	for scanner.Scan() {
 		query := strings.TrimSpace(scanner.Text())
 
 		if len(query) == 0 {
-			fmt.Print(">> ")
+			fmt.Print(">>> ")
 			continue
 		}
 
@@ -37,10 +40,10 @@ func main() {
 			fmt.Printf("%s: %f\n", item.Candidate, item.Score)
 		}
 
-		fmt.Print(">> ")
+		fmt.Print(">>> ")
 	}
 
 	if err := scanner.Err(); err != nil {
-		fmt.Errorf("Something went bad: %v", err)
+		log.Fatalf("Something went bad: %v", err)
 	}
 }
