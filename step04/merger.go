@@ -5,27 +5,23 @@ type MergeCandidate uint64
 
 // NewMergeCandidate creates a new instance of MergeCandidate for the given document id and overlap count
 func NewMergeCandidate(id DocumentID, overlap int) MergeCandidate {
-	return MergeCandidate(uint64(id)<<32 | uint64(overlap))
+	return MergeCandidate(uint64(overlap)<<32 | uint64(id))
 }
 
 // Position returns the position of the merge candidate
 func (m MergeCandidate) Position() DocumentID {
-	return DocumentID(m >> 32)
+	return DocumentID(uint32(m))
 }
 
 // Overlap returns the overlap count of the merge candidate
 func (m MergeCandidate) Overlap() int {
 	// This will be safe, because we will never reach overlap (we don't have so many posting list at once)
-	return int(m & 0xFFFFFFFF)
+	return int(m >> 32)
 }
 
 // increment increments the underlying overlap count
 func (m *MergeCandidate) increment() {
-	*m++
-
-	if m.Overlap() == 0 {
-		panic("overlap overflow")
-	}
+	*m = *m + 1<<32
 }
 
 // Merge merges the given list of postings and returns array of merge candidates

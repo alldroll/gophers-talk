@@ -91,12 +91,14 @@ func (n *NGramIndex) Search(query string, topK int) SearchResult {
 			// see http://stevehanov.ca/blog/index.php?id=122
 			if len(result) < topK {
 				heap.Push(&result, SearchCandidate{
-					Candidate: n.dictionary[int(docID)],
+					candidate: candidate,
+					Value:     n.dictionary[int(docID)],
 					Score:     score,
 				})
-			} else if result[0].Score > score {
+			} else if result[0].candidate <= candidate && result[0].Score > score {
+				result[0].candidate = candidate
 				result[0].Score = score
-				result[0].Candidate = n.dictionary[int(docID)]
+				result[0].Value = n.dictionary[int(docID)]
 				heap.Fix(&result, 0)
 			}
 		}

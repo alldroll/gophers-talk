@@ -2,8 +2,18 @@ package main
 
 // SearchCandidate represents the result item
 type SearchCandidate struct {
-	Candidate string
+	candidate MergeCandidate
+	Value     string
 	Score     float64
+}
+
+// less tells if the given candidate has weaker characteristics than the provided
+func (s SearchCandidate) less(candidate MergeCandidate, score float64) bool {
+	if s.candidate.Overlap() == candidate.Overlap() {
+		return s.Score > score
+	}
+
+	return s.candidate < candidate
 }
 
 // SearchResult is a result of fuzzy search request
@@ -17,7 +27,7 @@ func (s SearchResult) Len() int {
 // Less reports whether the element with
 // index i should sort before the element with index j.
 func (s SearchResult) Less(i, j int) bool {
-	return s[i].Score > s[j].Score
+	return s[i].less(s[j].candidate, s[j].Score)
 }
 
 // Swap swaps the elements with indexes i and j.
