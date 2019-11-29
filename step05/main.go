@@ -60,7 +60,7 @@ func main() {
 		elapsed := time.Since(start).String()
 
 		for _, item := range result {
-			fmt.Printf("%s: %f\n", item.Candidate, item.Score)
+			fmt.Printf("%s: %f\n", item.Value, item.Score)
 		}
 
 		fmt.Printf("\nElapsed: %s (%d candidates)\n", elapsed, len(result))

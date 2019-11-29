@@ -37,7 +37,7 @@ func main() {
 		result := suggester.Search(query)
 
 		for _, item := range result {
-			fmt.Printf("%s: %f\n", item.Candidate, item.Score)
+			fmt.Printf("%s: %f\n", item.Value, item.Score)
 		}
 
 		fmt.Print(">>> ")

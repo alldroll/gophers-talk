@@ -84,7 +84,8 @@ func (n *NGramIndex) Search(query string) SearchResult {
 			docID := candidate.Position()
 
 			result = append(result, SearchCandidate{
-				Candidate: n.dictionary[int(docID)],
+				candidate: candidate,
+				Value:     n.dictionary[int(docID)],
 				Score:     JaccardDistance(candidate.Overlap(), sizeA, sizeB),
 			})
 		}
@@ -92,7 +93,7 @@ func (n *NGramIndex) Search(query string) SearchResult {
 		rid = rid[:0]
 	}
 
-	sort.Stable(result)
+	sort.Stable(sort.Reverse(result))
 
 	return result
 }

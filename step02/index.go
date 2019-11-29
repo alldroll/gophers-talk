@@ -63,7 +63,7 @@ func (n *NGramIndex) Search(query string) []string {
 	// sort by overlap count
 	// use SliceStable to preserve the order for the candidates with the same overlap count
 	sort.SliceStable(candidates, func(i, j int) bool {
-		return candidates[i].Overlap() > candidates[j].Overlap()
+		return candidates[i] > candidates[j]
 	})
 
 	for _, candidate := range candidates {
