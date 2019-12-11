@@ -12,7 +12,7 @@ type Term = string
 type PostingList = []DocumentID
 
 // InvertedIndex is a datastructure, that maps back from terms to the parts of a document where they occur
-type InvertedIndex = map[string]PostingList
+type InvertedIndex = map[Term]PostingList
 
 // LengthFilter maps back from terms length (nGram count) to the inverted indexes
 type LengthFilter = []InvertedIndex

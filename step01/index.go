@@ -10,7 +10,7 @@ type Term = string
 type PostingList = []DocumentID
 
 // InvertedIndex is a datastructure, that maps back from terms to the parts of a document where they occur
-type InvertedIndex = map[string]PostingList
+type InvertedIndex = map[Term]PostingList
 
 // NGramIndex represents a fuzzy string search structure
 type NGramIndex struct {
